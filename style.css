@@ -382,7 +382,15 @@ body{line-height:1.65}
 @media (max-width:380px){.header .nav-cta{min-height:44px}.collection-gallery{gap:26px 14px}.collection-gallery figcaption{font-size:12px}}
 @media (prefers-reduced-motion:reduce){.gallery-card,.uploaded-gallery figure,.vision-art{animation:none!important;transition:none!important;transform:none!important}.reveal-ready .reveal{opacity:1!important;transform:none!important}}
 
-/* Refined directional marks: geometric UI icons, not emoji glyphs. */
-.direction-mark{width:54px;height:54px;display:flex;align-items:center;justify-content:center;margin-bottom:30px;color:var(--cyan)}
-.direction-mark svg{display:block;width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:square;stroke-linejoin:miter}
-.position-pair article:nth-child(2) .direction-mark{color:#d0e3e6}
+
+/* Finance-native direction marks: compact market sparklines, not emoji/icon arrows. */
+.direction-mark.market-direction{width:84px;height:44px;display:block;margin:0 0 30px;color:var(--cyan)}
+.direction-mark.market-direction svg{display:block;width:84px;height:44px;overflow:visible;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter}
+.direction-mark.market-direction .market-arrowhead{stroke-width:2.4}
+.position-pair article:nth-child(2) .direction-mark.market-direction{color:#d0e3e6}
+.position-pair article{position:relative;overflow:hidden}
+.position-pair article:after{content:"";position:absolute;left:35px;right:35px;bottom:0;height:1px;background:linear-gradient(90deg,currentColor,transparent);opacity:.08}
+@media(max-width:760px){
+ .direction-mark.market-direction,.direction-mark.market-direction svg{width:72px;height:38px}
+ .direction-mark.market-direction{margin-bottom:24px}
+}
