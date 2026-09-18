@@ -1,19 +1,22 @@
-STRAPTRADE — corrected website folder
+STRAPTRADE UPDATED WEBSITE
 
-This version restores the previous website design and includes focused fixes for mobile use, full NFT artwork, motion controls and local file paths.
+Static site: HTML + CSS + JavaScript. No build step required.
 
-PREVIEW ON YOUR COMPUTER
-Extract the complete ZIP first, then open index.html. Keep all folders together. The CSS, fonts, images and links are included and work from the extracted folder.
+GITHUB PAGES UPLOAD
+1. Extract this ZIP.
+2. Open this folder until you can see index.html, style.css, app.js, assets, vision, product, roadmap, etc.
+3. Upload THE CONTENTS of this folder to the root of your GitHub repository. Do not upload the outer folder itself.
+4. Keep the included CNAME file. It contains straptrade.xyz.
+5. GitHub Pages should publish from main / (root).
 
-UPDATE YOUR LIVE WEBSITE
-1. Open https://github.com/azeez-droid/straptrade.
-2. Choose Add file > Upload files.
-3. Drag the CONTENTS of this extracted folder into GitHub, including index.html, style.css, app.js, assets, documents and every page folder.
-4. Commit the changes to main.
-5. Wait for the Pages deployment in Actions, then reload https://straptrade.xyz.
+Pages
+- /
+- /vision/
+- /how-it-works/
+- /product/
+- /roadmap/
+- /whitepaper/
+- /trade/
 
-Keep index.html beside CNAME at the repository root. Do not upload the ZIP or place everything inside another straptrade folder. CNAME remains straptrade.xyz. No Namecheap DNS change is needed.
-
-The files retain your collection names and order, Q4 2026–Q4 2027 roadmap, Enso launch announcement, all-chain scope, original whitepaper, and Coming soon Trade page.
-
-Checks completed: original design structure and copy preserved; local links and files resolve; image files, collection order, whitepaper and JavaScript syntax verified. Browser/device visual testing was unavailable in this environment.
+Trade intentionally displays only Coming soon in the main content.
+The original supplied whitepaper is documents/StrapTrade-Whitepaper.docx.
