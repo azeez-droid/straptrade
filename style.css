@@ -406,5 +406,14 @@ body{line-height:1.65}
 .page-next>.ui-arrow{transition:transform .2s}
 
 /* Keep the existing market-arrow shapes; only apply finance direction colors. */
-.position-pair article:first-child .direction-mark.market-direction{color:#35c978}
-.position-pair article:nth-child(2) .direction-mark.market-direction{color:#ef5b5b}
+
+
+
+/* Final market signal colors — intentionally override earlier cyan/neutral direction styling. */
+.home-market-views .position-pair article:first-child .direction-mark.market-direction{color:#2fd67b!important}
+.home-market-views .position-pair article:nth-child(2) .direction-mark.market-direction{color:#f05252!important}
+
+/* Straight finance-style navigation arrow. */
+.text-link-arrow .ui-arrow-straight{width:34px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:square;stroke-linejoin:miter}
+.text-link-arrow:hover .ui-arrow-straight{transform:translateX(4px)}
+.text-link-arrow .ui-arrow-straight{transition:transform .2s ease}
