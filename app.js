@@ -1,6 +1,5 @@
 (() => {
   'use strict';
-  document.documentElement.classList.add('js');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   let paused = reduced.matches;
   const toggle = document.getElementById('motion-toggle');
@@ -34,17 +33,18 @@
   window.addEventListener('scroll', schedule, { passive: true });
   window.addEventListener('resize', schedule, { passive: true });
   if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('reveal-ready');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
-    }, { threshold: .12 });
+    }, { threshold: .12, rootMargin: '0px 0px -5% 0px' });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   } else document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
   const steps = [...document.querySelectorAll('.step')];
   const content = [
-    ['COLLECTION INDEX', 'One collection.<br>One market.', '/assets/nft-cat.webp'],
+    ['COLLECTION DATA', 'Signals become<br>reference inputs.', '/assets/nft-cat.webp'],
+    ['NFT INDEX', 'One collection.<br>One reference price.', '/assets/nft-arcade.webp'],
     ['LONG / SHORT', 'Your view.<br>Your position.', '/assets/nft-anime.webp'],
-    ['ORACLE PRICING', 'Collection value.<br>Market precision.', '/assets/nft-arcade.webp'],
-    ['RISK ENGINE', 'Margin. Funding.<br>Liquidation.', '/assets/nft-doodle.webp']
+    ['RISK & SETTLEMENT', 'Margin. Funding.<br>Liquidation.', '/assets/nft-doodle.webp']
   ];
   function selectStep(index, focus = false) {
     steps.forEach((step, i) => {
@@ -55,7 +55,7 @@
     });
     document.getElementById('index-title').textContent = content[index][0];
     document.getElementById('index-value').innerHTML = content[index][1];
-    const art = document.getElementById('protocol-image'); art.removeAttribute('srcset'); art.src = content[index][2]; art.alt = ['Hypurr collectible', 'Azuki collectible', 'RH Machines collectible', 'Doodles collectible'][index];
+    const art = document.getElementById('protocol-image'); art.removeAttribute('srcset'); art.src = content[index][2]; art.alt = ['Hypurr collectible', 'RH Machines collectible', 'Azuki collectible', 'Doodles collectible'][index];
     const panel = document.getElementById('step-panel');
     panel.textContent = steps[index].querySelector('.step-detail').textContent;
     panel.setAttribute('aria-labelledby', steps[index].id);
@@ -91,5 +91,29 @@
   });
   document.addEventListener('click', e => { if (!e.target.closest('.header')) closeMenu(); });
   window.matchMedia('(min-width: 901px)').addEventListener('change', closeMenu);
+
+  const terminalDialog = document.getElementById('terminal-dialog');
+  const terminalOpeners = [...document.querySelectorAll('[data-terminal-open]')];
+  const terminalClose = terminalDialog?.querySelector('[data-terminal-close]');
+  let terminalReturnFocus = null;
+  function openTerminalDialog(event) {
+    if (!terminalDialog) return;
+    terminalReturnFocus = event.currentTarget;
+    terminalDialog.showModal();
+    terminalClose?.focus();
+  }
+  function closeTerminalDialog() {
+    if (!terminalDialog?.open) return;
+    terminalDialog.close();
+  }
+  terminalOpeners.forEach(button => button.addEventListener('click', openTerminalDialog));
+  terminalClose?.addEventListener('click', closeTerminalDialog);
+  terminalDialog?.addEventListener('click', event => {
+    if (event.target === terminalDialog) closeTerminalDialog();
+  });
+  terminalDialog?.addEventListener('close', () => terminalReturnFocus?.focus());
+  document.addEventListener('visibilitychange', () => {
+    document.body.classList.toggle('page-hidden', document.hidden);
+  });
   updateScroll();
 })();
