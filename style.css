@@ -381,3 +381,8 @@ body{line-height:1.65}
 }
 @media (max-width:380px){.header .nav-cta{min-height:44px}.collection-gallery{gap:26px 14px}.collection-gallery figcaption{font-size:12px}}
 @media (prefers-reduced-motion:reduce){.gallery-card,.uploaded-gallery figure,.vision-art{animation:none!important;transition:none!important;transform:none!important}.reveal-ready .reveal{opacity:1!important;transform:none!important}}
+
+/* Refined directional marks: geometric UI icons, not emoji glyphs. */
+.direction-mark{width:54px;height:54px;display:flex;align-items:center;justify-content:center;margin-bottom:30px;color:var(--cyan)}
+.direction-mark svg{display:block;width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:square;stroke-linejoin:miter}
+.position-pair article:nth-child(2) .direction-mark{color:#d0e3e6}
