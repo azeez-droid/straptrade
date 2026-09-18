@@ -1,19 +1,19 @@
-STRAPTRADE — redesigned website
+STRAPTRADE — corrected website folder
 
-Upload to your existing GitHub Pages repository:
-1. Extract this ZIP on your computer.
-2. Open https://github.com/azeez-droid/straptrade and choose the Code tab.
-3. Choose Add file > Upload files.
-4. Open the extracted folder and drag its CONTENTS into GitHub. Include index.html, style.css, app.js, assets, documents and all page folders. Do not upload the ZIP or its outer folder.
-5. Keep CNAME set to straptrade.xyz. Commit the uploaded changes to main.
-6. Wait for the Pages deployment to finish in Actions, then reload https://straptrade.xyz.
+This version restores the previous website design and includes focused fixes for mobile use, full NFT artwork, motion controls and local file paths.
 
-index.html must be at the repository's top level, beside CNAME. No build command or package installation is required. Keep the existing Pages setting: main branch, / (root).
+PREVIEW ON YOUR COMPUTER
+Extract the complete ZIP first, then open index.html. Keep all folders together. The CSS, fonts, images and links are included and work from the extracted folder.
 
-This ZIP updates the site files; it does not change Namecheap DNS or publish automatically. The old nested straptrade folder is no longer used when these files are at the root.
+UPDATE YOUR LIVE WEBSITE
+1. Open https://github.com/azeez-droid/straptrade.
+2. Choose Add file > Upload files.
+3. Drag the CONTENTS of this extracted folder into GitHub, including index.html, style.css, app.js, assets, documents and every page folder.
+4. Commit the changes to main.
+5. Wait for the Pages deployment in Actions, then reload https://straptrade.xyz.
 
-Included: seven standalone pages, full-art NFT galleries, mobile navigation, restrained motion with pause and reduced-motion support, product preview zoom, and the original whitepaper DOCX.
+Keep index.html beside CNAME at the repository root. Do not upload the ZIP or place everything inside another straptrade folder. CNAME remains straptrade.xyz. No Namecheap DNS change is needed.
 
-The X footer mark has no destination because a verified project profile URL has not been supplied.
+The files retain your collection names and order, Q4 2026–Q4 2027 roadmap, Enso launch announcement, all-chain scope, original whitepaper, and Coming soon Trade page.
 
-Validation: checked 128 internal link/asset references, image integrity, collection order, HTML landmarks/headings/anchors and JavaScript syntax. Interactive browser and device testing remains to be performed after deployment.
+Checks completed: original design structure and copy preserved; local links and files resolve; image files, collection order, whitepaper and JavaScript syntax verified. Browser/device visual testing was unavailable in this environment.

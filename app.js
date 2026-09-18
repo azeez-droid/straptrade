@@ -1,66 +1,93 @@
 (() => {
   'use strict';
   document.documentElement.classList.add('js');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const toggle = document.querySelector('.motion-toggle');
-  let paused = false;
-  try { paused = localStorage.getItem('straptrade-motion') === 'paused'; } catch {}
-  const motionOff = () => paused || reduced.matches || document.hidden;
-  function syncMotion() {
-    document.body.classList.toggle('motion-paused', motionOff());
-    document.documentElement.classList.toggle('motion-paused', motionOff());
-    if (toggle) {
-      toggle.setAttribute('aria-pressed', String(paused || reduced.matches));
-      toggle.textContent = reduced.matches ? 'Reduced motion enabled' : paused ? 'Resume motion' : 'Pause motion';
-      toggle.disabled = reduced.matches;
-    }
-  }
-  syncMotion();
-  toggle?.addEventListener('click', () => {
-    paused = !paused;
-    try { localStorage.setItem('straptrade-motion', paused ? 'paused' : 'enabled'); } catch {}
-    syncMotion();
-  });
-  reduced.addEventListener('change', syncMotion);
-  document.addEventListener('visibilitychange', syncMotion);
-
-  if (!motionOff() && 'IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.reveal').forEach(element => {
-      // Already visible content never disappears after initial paint.
-      if (element.getBoundingClientRect().top >= innerHeight) {
-        observer.observe(element);
-        element.classList.add('reveal-pending');
-      }
-    });
-    document.querySelectorAll('.hero-art').forEach((element, index) => {
-      element.style.setProperty('--entry-delay', `${index * 80}ms`);
-      element.classList.add('gallery-enter');
-    });
-  }
-
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const assetBase = new URL('assets/', document.currentScript.src);
+  let userPaused = false;
+  try { userPaused = localStorage.getItem('straptrade-motion') === 'paused'; } catch {}
+  let paused = reduced.matches || userPaused;
+  const toggle = document.getElementById('motion-toggle');
   const progress = document.querySelector('.reading-progress');
-  let scrollFrame = 0;
-  function updateProgress() {
-    scrollFrame = 0;
-    const range = document.documentElement.scrollHeight - innerHeight;
-    if (progress) progress.style.transform = `scaleX(${range > 0 ? Math.max(0, Math.min(1, scrollY / range)) : 0})`;
+  const hero = document.querySelector('.hero-scroll');
+  let scheduled = false;
+  function updateScroll() {
+    const y = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.transform = `scaleX(${Math.min(1, y / Math.max(total, 1))})`;
+    const range = hero ? hero.offsetHeight - window.innerHeight : 0;
+    const amount = window.innerWidth > 760 && range > 0 ? Math.min(1, Math.max(0, y / range)) : 0;
+    document.documentElement.style.setProperty('--hero-progress', paused ? '0' : amount.toFixed(3));
+    scheduled = false;
   }
-  function scheduleProgress() {
-    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateProgress);
+  function schedule() { if (!scheduled) { requestAnimationFrame(updateScroll); scheduled = true; } }
+  function setMotion(value) {
+    paused = value;
+    document.body.classList.toggle('paused', paused);
+    document.documentElement.classList.toggle('motion-paused', paused);
+    if (toggle) {
+    toggle.setAttribute('aria-pressed', String(paused));
+    toggle.setAttribute('aria-label', paused ? 'Resume animation' : 'Pause animation');
+    toggle.querySelector('.motion-text').textContent = paused ? 'Resume motion' : 'Pause motion';
+    toggle.querySelector('.motion-icon').textContent = paused ? '▷' : 'Ⅱ';
+    }
+    schedule();
   }
-  addEventListener('scroll', scheduleProgress, { passive: true });
-  addEventListener('resize', scheduleProgress, { passive: true });
-  addEventListener('load', scheduleProgress);
-  updateProgress();
-
+  setMotion(paused);
+  toggle?.addEventListener('click', () => {
+    userPaused = !paused;
+    try { localStorage.setItem('straptrade-motion', userPaused ? 'paused' : 'enabled'); } catch {}
+    setMotion(userPaused || reduced.matches);
+  });
+  reduced.addEventListener('change', e => setMotion(e.matches || userPaused));
+  document.addEventListener('visibilitychange', () => {
+    document.body.classList.toggle('paused', document.hidden || paused);
+  });
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
+    }, { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach(el => {
+      if (!paused && el.getBoundingClientRect().top >= window.innerHeight) {
+        observer.observe(el);
+        el.classList.add('reveal-ready');
+      } else el.classList.add('visible');
+    });
+  } else document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  const steps = [...document.querySelectorAll('.step')];
+  const content = [
+    ['COLLECTION INDEX', 'One collection.<br>One market.', '/assets/nft-cat.webp'],
+    ['LONG / SHORT', 'Your view.<br>Your position.', '/assets/nft-anime.webp'],
+    ['ORACLE PRICING', 'Collection value.<br>Market precision.', '/assets/nft-arcade.webp'],
+    ['RISK ENGINE', 'Margin. Funding.<br>Liquidation.', '/assets/nft-doodle.webp']
+  ];
+  function selectStep(index, focus = false) {
+    steps.forEach((step, i) => {
+      const active = index === i;
+      step.classList.toggle('active', active);
+      step.setAttribute('aria-selected', String(active)); step.tabIndex = active ? 0 : -1;
+      step.querySelector('.step-plus').textContent = active ? '−' : '+';
+    });
+    document.getElementById('index-title').textContent = content[index][0];
+    document.getElementById('index-value').innerHTML = content[index][1];
+    const art = document.getElementById('protocol-image'); art.removeAttribute('srcset'); art.src = new URL(content[index][2].replace('/assets/', ''), assetBase).href; art.alt = ['Hypurr collectible', 'Azuki collectible', 'RH Machines collectible', 'Doodles collectible'][index];
+    const panel = document.getElementById('step-panel');
+    panel.textContent = steps[index].querySelector('.step-detail').textContent;
+    panel.setAttribute('aria-labelledby', steps[index].id);
+    if (focus) steps[index].focus();
+  }
+  steps.forEach((step, index) => {
+    step.addEventListener('click', () => selectStep(index));
+    step.addEventListener('keydown', event => {
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % steps.length;
+      if (event.key === 'ArrowUp') next = (index - 1 + steps.length) % steps.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = steps.length - 1;
+      if (next !== undefined) { event.preventDefault(); selectStep(next, true); }
+    });
+  });
   const menu = document.querySelector('.menu-toggle');
   const nav = document.getElementById('main-nav');
   function closeMenu() {
@@ -72,56 +99,14 @@
     const open = menu.getAttribute('aria-expanded') !== 'true';
     menu.setAttribute('aria-expanded', String(open));
     menu.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
-    nav?.classList.toggle('open', open);
+    nav.classList.toggle('open', open);
   });
-  nav?.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
-  document.addEventListener('click', event => { if (!event.target.closest('.site-header')) closeMenu(); });
-  document.addEventListener('focusin', event => { if (!event.target.closest('.site-header')) closeMenu(); });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') {
-      closeMenu();
-      menu.focus();
-    }
+  nav?.addEventListener('click', e => { if (e.target.closest('a')) closeMenu(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); }
   });
-  matchMedia('(min-width: 901px)').addEventListener('change', closeMenu);
-
-  const steps = [...document.querySelectorAll('details.protocol-step')];
-  steps.forEach(step => step.addEventListener('toggle', () => {
-    if (step.open) steps.forEach(other => { if (other !== step) other.open = false; });
-    scheduleProgress();
-  }));
-
-  const dialog = document.querySelector('.preview-dialog');
-  const preview = document.querySelector('[data-open-preview]');
-  const imageArea = document.querySelector('.dialog-image-area');
-  const zoom = document.getElementById('zoom-preview');
-  function resetZoom() {
-    imageArea?.classList.remove('zoomed');
-    zoom?.setAttribute('aria-pressed', 'false');
-    if (zoom) zoom.textContent = 'Zoom in';
-    if (imageArea) { imageArea.scrollTop = 0; imageArea.scrollLeft = 0; }
-  }
-  if (dialog && typeof dialog.showModal === 'function') {
-    preview?.addEventListener('click', event => {
-      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      resetZoom();
-      dialog.showModal();
-      document.body.classList.add('dialog-open');
-      document.getElementById('close-preview')?.focus();
-    });
-    document.getElementById('close-preview')?.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => {
-      document.body.classList.remove('dialog-open');
-      resetZoom();
-      preview?.focus();
-    });
-    zoom?.addEventListener('click', () => {
-      const enlarged = imageArea.classList.toggle('zoomed');
-      zoom.setAttribute('aria-pressed', String(enlarged));
-      zoom.textContent = enlarged ? 'Fit image' : 'Zoom in';
-      if (enlarged) imageArea.focus();
-      else { imageArea.scrollTop = 0; imageArea.scrollLeft = 0; }
-    });
-  }
+  document.addEventListener('click', e => { if (!e.target.closest('.header')) closeMenu(); });
+  window.matchMedia('(min-width: 901px)').addEventListener('change', closeMenu);
+  document.addEventListener('focusin', e => { if (!e.target.closest('.header')) closeMenu(); });
+  updateScroll();
 })();
