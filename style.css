@@ -394,3 +394,17 @@ body{line-height:1.65}
  .direction-mark.market-direction,.direction-mark.market-direction svg{width:72px;height:38px}
  .direction-mark.market-direction{margin-bottom:24px}
 }
+
+/* Consistent interface arrows: vector line icons replace arrow glyphs. */
+.ui-arrow{display:inline-block;width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:square;stroke-linejoin:miter}
+.discover-button .ui-arrow{width:17px;height:17px}
+.text-link-arrow{display:inline-flex;align-items:center;gap:8px}
+.text-link-arrow .ui-arrow{width:14px;height:14px}
+.nav-cta .ui-arrow{width:15px;height:15px}
+.page-next>.ui-arrow{width:30px;height:30px;color:var(--cyan)}
+.page-next:hover>.ui-arrow{transform:translate(4px,-4px)}
+.page-next>.ui-arrow{transition:transform .2s}
+
+/* Keep the existing market-arrow shapes; only apply finance direction colors. */
+.position-pair article:first-child .direction-mark.market-direction{color:#35c978}
+.position-pair article:nth-child(2) .direction-mark.market-direction{color:#ef5b5b}
